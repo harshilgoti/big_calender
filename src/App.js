@@ -1,10 +1,16 @@
-import React, { Component } from "react";
+import React, { Component, Suspense } from "react";
 import events from "./events";
 import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "semantic-ui-css/semantic.min.css";
 import { Button, Modal, Form } from "semantic-ui-react";
+
+const Header = React.lazy(() => {
+  return new Promise((resolve) => setTimeout(resolve, 1000)).then(() =>
+    import("./header")
+  );
+});
 
 class App extends Component {
   constructor(...args) {
@@ -74,21 +80,26 @@ class App extends Component {
   render() {
     return (
       <>
-        <Calendar
-          style={{ height: "700px" }}
-          selectable
-          localizer={momentLocalizer(moment)}
-          events={this.state.events}
-          scrollToTime={new Date(1970, 1, 1, 6)}
-          defaultDate={new Date(2015, 3, 12)}
-          onSelectEvent={(event) => this.handleSelectUpdate(event)}
-          onSelectSlot={this.handleSelect}
-          defaultView={Views.MONTHS}
-          step={30}
-          onNavigate={() => console.log("onNavigate")}
-          onView={() => console.log("onView")}
-          onRangeChange={() => console.log("onRangeChange")}
-        />
+        <Suspense fallback={<h2>Products are loading...</h2>}>
+          <Header />
+        </Suspense>
+        <Suspense fallback={<h1>Loading...</h1>}>
+          <Calendar
+            style={{ height: "700px" }}
+            selectable
+            localizer={momentLocalizer(moment)}
+            events={this.state.events}
+            scrollToTime={new Date(1970, 1, 1, 6)}
+            defaultDate={new Date(2015, 3, 12)}
+            onSelectEvent={(event) => this.handleSelectUpdate(event)}
+            onSelectSlot={this.handleSelect}
+            defaultView={Views.MONTHS}
+            step={30}
+            onNavigate={() => console.log("onNavigate")}
+            onView={() => console.log("onView")}
+            onRangeChange={() => console.log("onRangeChange")}
+          />
+        </Suspense>
         <Modal
           dimmer={"blurring"}
           open={this.state.open}
@@ -110,9 +121,9 @@ class App extends Component {
           </Modal.Content>
           <Modal.Actions>
             {" "}
-            <Button negative onClick={() => this.setState({ open: false })}>
+            {/* <Button negative onClick={() => this.setState({ open: false })}>
               Delete
-            </Button>
+            </Button> */}
             <div>
               <Button negative onClick={() => this.setState({ open: false })}>
                 Cancel
