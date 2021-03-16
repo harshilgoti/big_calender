@@ -10,24 +10,69 @@ class App extends Component {
   constructor(...args) {
     super(...args);
 
-    this.state = { events, open: false, dimmer: undefined };
+    this.state = { events, open: false, dimmer: undefined, start: "", end: "" };
   }
 
   handleSelect = ({ start, end }) => {
-    this.setState({ open: true, dimmer: "blurring" });
+    this.setState({ open: true, start: start, end: end });
   };
 
-  // this.setState({
-  //   events: [
-  //     ...this.state.events,
-  //     {
-  //       start,
-  //       end,
-  //       title,
-  //     },
-  //   ],
-  // });
+  handleAddEvent = (event) => {
+    const { start, end, title } = this.state;
+    if (title) {
+      this.setState({
+        events: [
+          ...this.state.events,
+          {
+            start,
+            end,
+            title,
+          },
+        ],
+        open: false,
+        start: "",
+        end: "",
+        title: "",
+      });
+    } else {
+      this.setState({
+        open: false,
+      });
+    }
+  };
+
+  handleSelectUpdate = (event) => {
+    const { title, start, end } = event;
+    console.log("eve", event);
+    this.setState({ open: true, start: start, end: end, title: title });
+  };
+
+  handleUpdateEvent = () => {
+    const { start, end, title } = this.state;
+
+    if (title) {
+      this.setState({
+        events: [
+          ...this.state.events,
+          {
+            start,
+            end,
+            title,
+          },
+        ],
+        open: false,
+        start: "",
+        end: "",
+        title: "",
+      });
+    } else {
+      this.setState({
+        open: false,
+      });
+    }
+  };
   render() {
+    console.log(this.state);
     return (
       <>
         <Calendar
@@ -37,7 +82,7 @@ class App extends Component {
           events={this.state.events}
           scrollToTime={new Date(1970, 1, 1, 6)}
           defaultDate={new Date(2015, 3, 12)}
-          onSelectEvent={(event) => alert(event.title)}
+          onSelectEvent={(event) => this.handleSelectUpdate(event)}
           onSelectSlot={this.handleSelect}
           defaultView={Views.MONTHS}
           step={30}
@@ -46,25 +91,30 @@ class App extends Component {
           onRangeChange={() => console.log("onRangeChange")}
         />
         <Modal
-          dimmer={this.state.dimmer}
+          dimmer={"blurring"}
           open={this.state.open}
           onClose={() => this.setState({ open: false })}
+          size={"tiny"}
         >
-          <Modal.Header>Use Google's location service?</Modal.Header>
+          <Modal.Header>Add Event</Modal.Header>
           <Modal.Content>
             <Form>
               <Form.Field>
                 <label>Event Title</label>
-                <input placeholder="enter your event title" />
+                <input
+                  placeholder="enter your event title"
+                  value={this.state.title}
+                  onChange={(e) => this.setState({ title: e.target.value })}
+                />
               </Form.Field>
             </Form>
           </Modal.Content>
           <Modal.Actions>
             <Button negative onClick={() => this.setState({ open: false })}>
-              Disagree
+              Cancel
             </Button>
-            <Button positive onClick={() => this.setState({ open: false })}>
-              Agree
+            <Button positive onClick={() => this.handleAddEvent()}>
+              Add
             </Button>
           </Modal.Actions>
         </Modal>
