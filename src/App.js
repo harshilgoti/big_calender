@@ -27,6 +27,7 @@ class App extends Component {
             start,
             end,
             title,
+            id: Math.random(),
           },
         ],
         open: false,
@@ -43,7 +44,6 @@ class App extends Component {
 
   handleSelectUpdate = (event) => {
     const { title, start, end } = event;
-    console.log("eve", event);
     this.setState({ open: true, start: start, end: end, title: title });
   };
 
@@ -72,7 +72,6 @@ class App extends Component {
     }
   };
   render() {
-    console.log(this.state);
     return (
       <>
         <Calendar
@@ -110,12 +109,18 @@ class App extends Component {
             </Form>
           </Modal.Content>
           <Modal.Actions>
+            {" "}
             <Button negative onClick={() => this.setState({ open: false })}>
-              Cancel
+              Delete
             </Button>
-            <Button positive onClick={() => this.handleAddEvent()}>
-              Add
-            </Button>
+            <div>
+              <Button negative onClick={() => this.setState({ open: false })}>
+                Cancel
+              </Button>
+              <Button positive onClick={() => this.handleAddEvent()}>
+                Add
+              </Button>
+            </div>
           </Modal.Actions>
         </Modal>
       </>
